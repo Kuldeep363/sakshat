@@ -90,6 +90,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       ?.getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
+        console.log("video:", myVideo.current);
         myVideo.current && (myVideo.current.srcObject = currentStream);
       });
 
@@ -102,7 +103,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
         }
       }
     };
-  }, []);
+  }, [myVideo.current]);
 
   useEffect(() => {
     if (stream) {
