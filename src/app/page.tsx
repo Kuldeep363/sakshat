@@ -1,101 +1,75 @@
 import Image from "next/image";
+import Logo from "./assets/img/sakshat-white.png";
+import CopyID from "./components/home/CopyID";
+import BMCQR from "./assets/img/bmc_qr.png";
+import BMC from "./assets/img/bmc_gif.gif";
+import Form from "./components/home/Form";
+import Video from "./components/home/Video";
+import VideoCall from "./components/home/VideoCall";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="w-screen h-screen font-[family-name:var(--primary)]" id="bkg">
+      <section className="pb-10 bg-[var(--primary-color)] text-white">
+        <header className="flex justify-between p-5 items-center w-full">
+          <Image src={Logo} alt="Sakshat logo" width={100} />
+          <CopyID />
+        </header>
+        <div className="flex items-center justify-center flex-col">
+          <div className="w-11/12">
+            <p className="font-[family-name:var(---primary)] md:text-6xl text-2xl my-1 md:my-2 font-medium text-center">
+              Your Voice, Your Privacy
+            </p>
+            <p className="font-[family-name:var(---primary)] md:text-xl text-sm mb-2 md:my-2 text-center font-light">
+              Connect with others, share ideas, and stay anonymous —{" "}
+              <span className="font-medium">no strings attached</span>
+            </p>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+      <section className="relative">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white py-3 px-3 rounded-md  w-11/12 md:w-2/4">
+        <VideoCall/>
+          <div className="flex flex-wrap-reverse">
+            <div className="flex md:flex-1 items-end gap-3 flex-wrap mt-2 max-sm:justify-center w-full md:w-max">
+              <a
+                href="https://www.buymeacoffee.com/rawat"
+                target="_blank"
+                className="w-full md:w-[150px] md:h-[150px] hidden md:block"
+              >
+                <Image
+                  src={BMCQR}
+                  alt="Chat without saving number, buy me a coffee"
+                  width={150}
+                  height={150}
+                  className="w-full"
+                />
+              </a>
+              <div className="w-full md:hidden bg-slate-100 my-1 h-[1px] rounded-full"/>
+              <a
+                href="https://www.buymeacoffee.com/rawat"
+                target="_blank"
+                className="p-2 px-3 rounded-full bg-[#ffdd00] flex gap-1 items-center max-sm:w-full justify-center"
+              >
+                <Image
+                  src={BMC}
+                  alt="Chat without saving number, buy me a coffee"
+                  width={25}
+                  height={25}
+                  unoptimized
+                />
+                <p className="text-sm font-medium">Buy me a coffee</p>
+              </a>
+            </div>
+            <div className="md:flex-1 w-full md:w-3/4">
+              <Form/>
+              <small className="text-slate-400 text-xs">
+                <i>You can copy your id from top right corner</i>
+              </small>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
