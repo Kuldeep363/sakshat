@@ -50,7 +50,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
   const connectionRef = useRef<Instance | null>();
 
   useEffect(() => {
-    socket.current = io("http://192.168.1.48:5000", {
+    socket.current = io(process.env.NEXT_PUBLIC_BACKEND_URL, {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
