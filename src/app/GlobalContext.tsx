@@ -64,7 +64,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       successToast("Connected");
     });
 
-    socket.current.on("callUser", ({ from, name: callerName, signal,to }) => {
+    socket.current.on("callUser", ({ from, name: callerName, signal,to }:{from:string,name: string, signal: any, to: string}) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal, isCaller: false, to });
     });
 
@@ -155,7 +155,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       userVideo.current && (userVideo.current.srcObject = currentStream);
     });
 
-    socket.current.on("callAccepted", (signal) => {
+    socket.current.on("callAccepted", (signal:any) => {
       setCallAccepted(true);
       setCallEnded(false);
       setCall(prev=>({
