@@ -5,6 +5,7 @@ name: string | null,
 signal: any ,
 to: string | null,
 isCaller: boolean,
+toName: string
 }
 
 export interface SocketContextInterfce {

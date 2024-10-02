@@ -34,6 +34,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     to: "",
     signal: null,
     isCaller: true,
+    toName: ""
   });
   const [me, setMe] = useState<string | undefined>("");
   const [videoState, setVideoState] = useState<VideoStateInterface>({
@@ -67,7 +68,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     });
 
     socket.current.on("callUser", ({ from, name: callerName, signal,to }:{from:string,name: string, signal: any, to: string}) => {
-      setCall({ isReceivingCall: true, from, name: callerName, signal, isCaller: false, to });
+      setCall({ isReceivingCall: true, from, name: callerName, signal, isCaller: false, to, toName:"" });
       ringtoneRef.current && (ringtoneRef.current.play().catch(()=>{
         console.log("Audio not found for ringtone");
       }))
@@ -80,7 +81,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
 
     socket.current.on("callRejected", () => {
       console.log("call rejected...");
-      setCall({ isReceivingCall: false, from: "", name: "", signal: null, to:"", isCaller: false });
+      setCall({ isReceivingCall: false, from: "", name: "", signal: null, to:"", isCaller: false, toName:"" });
       setCallAccepted(false);
       setCallEnded(true);
       connectionRef.current?.destroy();
@@ -137,6 +138,10 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  useEffect(()=>{
+    userVideo.current && (userVideo.current.muted = false);
+  },[userVideo.current])
+
   const answerCall = () => {
     stopRigntone();
     setCallAccepted(true);
@@ -145,7 +150,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     const peer = new Peer({ initiator: false, trickle: false, stream });
   
     peer.on("signal", (data) => {
-      socket.current.emit("answerCall", { signal: data, to: call.from });
+      socket.current.emit("answerCall", { signal: data, to: call.from, toName: name });
     });
   
     peer.on("stream", (currentStream) => {
@@ -174,7 +179,8 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
   
     const peer = new Peer({ initiator: true, trickle: false, stream });
   
-    const handleCallAccepted = (signal: any) => {
+    const handleCallAccepted = ({signal,toName}:{signal: any, toName: string}) => {
+      console.log(toName)
       if (connectionRef.current) {
         setCallAccepted(true);
         setCallEnded(false);
@@ -182,6 +188,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
           ...prev,
           to: id,
           isCaller: true,
+          toName: toName
         }));
         try {
           connectionRef.current.signal(signal);
@@ -189,9 +196,10 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
           console.error("Error signaling:", error);
         }
       }
+      userVideo.current && (userVideo.current.muted = false);
     };
   
-    socket.current.on("callAccepted", handleCallAccepted);
+    socket.current.on("callAccepted",handleCallAccepted)
   
     peer.on("signal", (data) => {
       socket.current.emit("callUser", {
@@ -223,7 +231,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
   const rejectCall = (id: string | null) => {
     stopRigntone();
     socket.current.emit("rejectCall", { userToReject: id });
-    setCall({ isReceivingCall: false, from: "", name: "", signal: null, to: "", isCaller: false });
+    setCall({ isReceivingCall: false, from: "", name: "", signal: null, to: "", isCaller: false, toName:"" });
   };
 
   const leaveCall = () => {
