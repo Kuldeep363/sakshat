@@ -26,7 +26,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
   const [stream, setStream] = useState<MediaStream | undefined>();
   const [name, setName] = useState("");
   const ringtoneRef = useRef<HTMLAudioElement | null>(null);
-  const [cleanup, setCleanup] = useState<() => void>(() => () => {})
+  const [cleanup, setCleanup] = useState<() => void>(() => () => {});
   const [call, setCall] = useState<Call>({
     isReceivingCall: false,
     from: "",
@@ -34,7 +34,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     to: "",
     signal: null,
     isCaller: true,
-    toName: ""
+    toName: "",
   });
   const [me, setMe] = useState<string | undefined>("");
   const [videoState, setVideoState] = useState<VideoStateInterface>({
@@ -67,12 +67,34 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       successToast("Connected");
     });
 
-    socket.current.on("callUser", ({ from, name: callerName, signal,to }:{from:string,name: string, signal: any, to: string}) => {
-      setCall({ isReceivingCall: true, from, name: callerName, signal, isCaller: false, to, toName:"" });
-      ringtoneRef.current && (ringtoneRef.current.play().catch(()=>{
-        console.log("Audio not found for ringtone");
-      }))
-    });
+    socket.current.on(
+      "callUser",
+      ({
+        from,
+        name: callerName,
+        signal,
+        to,
+      }: {
+        from: string;
+        name: string;
+        signal: any;
+        to: string;
+      }) => {
+        setCall({
+          isReceivingCall: true,
+          from,
+          name: callerName,
+          signal,
+          isCaller: false,
+          to,
+          toName: "",
+        });
+        ringtoneRef.current &&
+          ringtoneRef.current.play().catch(() => {
+            console.log("Audio not found for ringtone");
+          });
+      }
+    );
 
     const storedUserId = sessionStorage.getItem("userId");
     if (storedUserId) {
@@ -81,16 +103,24 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
 
     socket.current.on("callRejected", () => {
       console.log("call rejected...");
-      setCall({ isReceivingCall: false, from: "", name: "", signal: null, to:"", isCaller: false, toName:"" });
+      setCall({
+        isReceivingCall: false,
+        from: "",
+        name: "",
+        signal: null,
+        to: "",
+        isCaller: false,
+        toName: "",
+      });
       setCallAccepted(false);
       setCallEnded(true);
       connectionRef.current?.destroy();
       connectionRef.current = null;
-       window.location.reload();
+      window.location.reload();
     });
 
     return () => {
-      socket.current.disconnect(); 
+      socket.current.disconnect();
     };
   }, []);
 
@@ -130,33 +160,37 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     }
   }, [videoState.video, stream]);
 
-  const stopRigntone = ()=>{
-    if(ringtoneRef.current){
-      console.log("rigntone stoping")
+  const stopRigntone = () => {
+    if (ringtoneRef.current) {
+      console.log("rigntone stoping");
       ringtoneRef.current.pause();
       ringtoneRef.current.currentTime = 0;
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     userVideo.current && (userVideo.current.muted = false);
-  },[userVideo.current])
+  }, [userVideo.current]);
 
   const answerCall = () => {
     stopRigntone();
     setCallAccepted(true);
     setCallEnded(false);
-  
+
     const peer = new Peer({ initiator: false, trickle: false, stream });
-  
+
     peer.on("signal", (data) => {
-      socket.current.emit("answerCall", { signal: data, to: call.from, toName: name });
+      socket.current.emit("answerCall", {
+        signal: data,
+        to: call.from,
+        toName: name,
+      });
     });
-  
+
     peer.on("stream", (currentStream) => {
       userVideo.current && (userVideo.current.srcObject = currentStream);
     });
-  
+
     // Signal after checking the call signal is valid
     if (call.signal) {
       try {
@@ -165,10 +199,9 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
         console.error("Error signaling:", error);
       }
     }
-  
+
     connectionRef.current = peer;
   };
-  
 
   const callUser = (id: string) => {
     // Prevent new calls if already in a call
@@ -176,11 +209,17 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       console.log("You are already in a call.");
       return;
     }
-  
+
     const peer = new Peer({ initiator: true, trickle: false, stream });
-  
-    const handleCallAccepted = ({signal,toName}:{signal: any, toName: string}) => {
-      console.log(toName)
+
+    const handleCallAccepted = ({
+      signal,
+      toName,
+    }: {
+      signal: any;
+      toName: string;
+    }) => {
+      console.log(toName);
       if (connectionRef.current) {
         setCallAccepted(true);
         setCallEnded(false);
@@ -188,7 +227,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
           ...prev,
           to: id,
           isCaller: true,
-          toName: toName
+          toName: toName,
         }));
         try {
           connectionRef.current.signal(signal);
@@ -198,9 +237,9 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       }
       userVideo.current && (userVideo.current.muted = false);
     };
-  
-    socket.current.on("callAccepted",handleCallAccepted)
-  
+
+    socket.current.on("callAccepted", handleCallAccepted);
+
     peer.on("signal", (data) => {
       socket.current.emit("callUser", {
         userToCall: id,
@@ -209,13 +248,13 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
         name,
       });
     });
-  
+
     peer.on("stream", (currentStream) => {
       userVideo.current && (userVideo.current.srcObject = currentStream);
     });
-  
+
     connectionRef.current = peer;
-  
+
     // Cleanup function to remove listeners
     const cleanupFunction = () => {
       socket.current.off("callAccepted", handleCallAccepted);
@@ -224,28 +263,36 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
         connectionRef.current = null;
       }
     };
-  
+
     setCleanup(() => cleanupFunction);
   };
-  
+
   const rejectCall = (id: string | null) => {
     stopRigntone();
     socket.current.emit("rejectCall", { userToReject: id });
-    setCall({ isReceivingCall: false, from: "", name: "", signal: null, to: "", isCaller: false, toName:"" });
+    setCall({
+      isReceivingCall: false,
+      from: "",
+      name: "",
+      signal: null,
+      to: "",
+      isCaller: false,
+      toName: "",
+    });
   };
 
   const leaveCall = () => {
     stopRigntone();
     rejectCall(call.isCaller ? call.to : call.from);
-    
+
     setCallEnded(true);
     setCallAccepted(false);
-    
+
     if (connectionRef.current) {
       connectionRef.current.destroy();
       connectionRef.current = null;
     }
-    
+
     cleanup();
 
     window.location.reload();
@@ -273,7 +320,13 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     >
       {children}
       <Calling />
-      <audio ref={ringtoneRef} loop src={"https://dl.prokerala.com/downloads/ringtones/files/mp3/7120-download-iphone-6-original-ringtone-42676.mp3"} />
+      <audio
+        ref={ringtoneRef}
+        loop
+        src={
+          "https://dl.prokerala.com/downloads/ringtones/files/mp3/7120-download-iphone-6-original-ringtone-42676.mp3"
+        }
+      />
     </SocketContext.Provider>
   );
 };
