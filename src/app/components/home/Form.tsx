@@ -1,5 +1,6 @@
 "use client";
 import { useSocketContext } from "@/app/GlobalContext";
+import { warningToast } from "@/app/utils/utility";
 import React, { useCallback, useEffect, useState } from "react";
 import { HiMiniPhone } from "react-icons/hi2";
 
@@ -25,7 +26,8 @@ const Form = () => {
   };
   const handleSubmit = (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault();
-    socketContext?.callUser(formData.callerUUID);
+    if(socketContext?.me !== formData.callerUUID)  socketContext?.callUser(formData.callerUUID);
+    else warningToast("Can't call yourself");
   };
 
   useEffect(() => {
@@ -57,7 +59,20 @@ const Form = () => {
         placeholder="Enter your name"
         className="w-full rounded-md px-3 py-2 outline-none border-solid border-[#ededed] border text-slate-800 text-sm"
       />
-      {socketContext?.callAccepted && !socketContext.callEnded ? null : (
+
+      {socketContext?.call
+        ?.isReceivingCall && !socketContext?.callAccepted ? null : socketContext?.callAccepted &&
+        !socketContext.callEnded ? (
+        <button
+          className="bg-red-600 text-white rounded-full p-2 w-full "
+          onClick={() => socketContext.leaveCall()}
+        >
+          <div className="flex items-center gap-1 justify-center">
+            <HiMiniPhone />
+            <span>End Call</span>
+          </div>
+        </button>
+      ) : (
         <>
           <input
             type="text"
@@ -76,17 +91,6 @@ const Form = () => {
           </button>
         </>
       )}
-      {
-        socketContext?.callAccepted && !socketContext?.callEnded?
-        <button className="bg-red-600 text-white rounded-full p-2 w-full " onClick={()=>socketContext.leaveCall()}>
-            <div className="flex items-center gap-1 justify-center">
-              <HiMiniPhone />
-              <span>End Call</span>
-            </div>
-          </button>
-          :
-          null
-      }
     </form>
   );
 };

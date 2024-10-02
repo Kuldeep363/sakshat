@@ -85,8 +85,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
       setCallEnded(true);
       connectionRef.current?.destroy();
       connectionRef.current = null;
-
-    window.location.reload();
+       window.location.reload();
     });
 
     return () => {
@@ -221,8 +220,6 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     setCleanup(() => cleanupFunction);
   };
   
-
-
   const rejectCall = (id: string | null) => {
     stopRigntone();
     socket.current.emit("rejectCall", { userToReject: id });
@@ -268,7 +265,7 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
     >
       {children}
       <Calling />
-      <audio ref={ringtoneRef} src={"https://dl.prokerala.com/downloads/ringtones/files/mp3/7120-download-iphone-6-original-ringtone-42676.mp3"} />
+      <audio ref={ringtoneRef} loop src={"https://dl.prokerala.com/downloads/ringtones/files/mp3/7120-download-iphone-6-original-ringtone-42676.mp3"} />
     </SocketContext.Provider>
   );
 };

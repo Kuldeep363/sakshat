@@ -1,7 +1,28 @@
 import toast from "react-hot-toast";
 
 
-export const successToast = (text: string) => toast.success(text);
+export const successToast = (text: string) => toast.success(text, {
+    duration: 2000,
+  });
+
+export const warningToast = (text: string) => toast(text,{
+    duration: 4000,
+    position: 'bottom-center',
+  
+    // Styling
+    style: {},
+    className: '',
+  
+    // Custom Icon
+    icon: '⚠️',
+  
+    // Change colors of success/error/loading icon
+    iconTheme: {
+      primary: '#000',
+      secondary: '#fff',
+    },
+  
+  })
 
 export const errorToast = (text: string = "Something went wrong") =>
   toast.error(text, {

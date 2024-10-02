@@ -51,7 +51,7 @@ const Video: React.FC<VideoInterface> = ({videoRef,type,user}) => {
                 <p className="m-0 text-slate-400">Camera not detected</p>
             </div>
         }
-        <p className="m-0 absolute top-1 left-1 text-white z-40">{user?.slice(0,1).toUpperCase()+user?.slice(1)}</p>
+        <p className="m-0 absolute top-1 left-1 text-white z-40">{ user ? user?.slice(0,1).toUpperCase()+user?.slice(1) : "Unknown"}</p>
     </div>
   )
 }
