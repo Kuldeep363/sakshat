@@ -10,7 +10,7 @@ const VideoCall = () => {
           <Video videoRef={socketContext?.myVideo} type="my" user={socketContext?.name} />
           {
             socketContext?.callAccepted && !socketContext.callEnded ?
-            <Video videoRef={socketContext?.userVideo} type="caller" user={socketContext?.call?.name} />
+            <Video videoRef={socketContext?.userVideo} type="caller" user={socketContext?.call?.toName} />
             :
             null
           }
