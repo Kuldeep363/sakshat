@@ -169,8 +169,8 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    userVideo.current && (userVideo.current.muted = false);
-  }, [userVideo.current]);
+    callAccepted && !callEnded && userVideo.current && (userVideo.current.muted = false);
+  }, [userVideo.current, callAccepted ,callEnded ]);
 
   const answerCall = () => {
     stopRigntone();
@@ -235,7 +235,6 @@ const GlobalContext = ({ children }: { children: ReactNode }) => {
           console.error("Error signaling:", error);
         }
       }
-      userVideo.current && (userVideo.current.muted = false);
     };
 
     socket.current.on("callAccepted", handleCallAccepted);
